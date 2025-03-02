@@ -13,7 +13,7 @@ public class MapUtil {
 			} else if (tClass.getTypeName().equals("java.lang.String")) {
 				obj = obj.toString();
 			}
-			return tClass.cast(obj);
+			return tClass.cast(obj); // ép kiểu cho obj (ví dụ: obj mang giá trị Long do ở trên nhưng kiểu của obj vẫn là Object 
 		}
 		return null;
 	}
