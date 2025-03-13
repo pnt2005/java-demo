@@ -34,11 +34,6 @@ public class BuildingAPI {
 //		}
 //	}
 
-//	@GetMapping("/api/building/")
-//	public BuildingDTO postBuilding(@RequestBody BuildingDTO building) {
-//		return building;
-//	}
-
 	@DeleteMapping("/api/building/{id}")
 	public void deleteBuilding(@PathVariable Integer id) {
 		System.out.println("da xoa building id " + id);

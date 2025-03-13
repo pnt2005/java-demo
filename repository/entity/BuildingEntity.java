@@ -1,18 +1,69 @@
 package com.example.demo.repository.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "building")
 public class BuildingEntity {
+	@Id // khóa chính
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // tự tăng dần
 	private Long id;
+
+	@Column(name = "name")
 	private String name;
+
+	@Column(name = "ward")
 	private String ward;
+
+	@Column(name = "street")
 	private String street;
-	private Long districtid;
+
+//	@Column(name = "districtid")
+//	private Long districtid;
+
+	@Column(name = "managername")
 	private String managerName;
+
+	@Column(name = "managerphonenumber")
 	private String managerPhonenumber;
-	private Long floorArea;
-	private String emptyArea;
+
+	@Column(name = "rentprice")
 	private Long rentPrice;
-	private String serviceFee;
-	private Long brokerageFee;
+
+	@ManyToOne
+	@JoinColumn(name = "districtid")
+	private DistrictEntity district;
+
+	@OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
+	private List<RentAreaEntity> items = new ArrayList<>();
+
+	public List<RentAreaEntity> getItems() {
+		return items;
+	}
+
+	public void setItems(List<RentAreaEntity> items) {
+		this.items = items;
+	}
+
+	public DistrictEntity getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(DistrictEntity district) {
+		this.district = district;
+	}
 
 	public String getName() {
 		return name;
@@ -28,14 +79,6 @@ public class BuildingEntity {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Long getDistrictid() {
-		return districtid;
-	}
-
-	public void setDistrictid(Long districtid) {
-		this.districtid = districtid;
 	}
 
 	public String getManagerName() {
@@ -54,44 +97,12 @@ public class BuildingEntity {
 		this.managerPhonenumber = managerPhonenumber;
 	}
 
-	public Long getFloorArea() {
-		return floorArea;
-	}
-
-	public void setFloorArea(Long floorArea) {
-		this.floorArea = floorArea;
-	}
-
-	public String getEmptyArea() {
-		return emptyArea;
-	}
-
-	public void setEmptyArea(String emptyArea) {
-		this.emptyArea = emptyArea;
-	}
-
 	public Long getRentPrice() {
 		return rentPrice;
 	}
 
 	public void setRentPrice(Long rentPrice) {
 		this.rentPrice = rentPrice;
-	}
-
-	public String getServiceFee() {
-		return serviceFee;
-	}
-
-	public void setServiceFee(String serviceFee) {
-		this.serviceFee = serviceFee;
-	}
-
-	public Long getBrokerageFee() {
-		return brokerageFee;
-	}
-
-	public void setBrokerageFee(Long brokerageFee) {
-		this.brokerageFee = brokerageFee;
 	}
 
 	public String getWard() {

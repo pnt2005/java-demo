@@ -1,26 +1,25 @@
 package com.example.demo.repository.impl;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.builder.BuildingSearchBuilder;
 import com.example.demo.repository.BuildingRepository;
 import com.example.demo.repository.entity.BuildingEntity;
+import com.example.demo.utils.ConnectionJDBCUtil;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+//data access layer
 
 @Repository
-@Primary // ưu tiên cái này khi có 2 implements cùng 1 method của interface
-public class BuildingRepositoryImpl implements BuildingRepository {
-	@PersistenceContext
-	private EntityManager entityManager;
-
+public class JDBCBuildingRepositoryImpl implements BuildingRepository {
 	public static void joinTable(BuildingSearchBuilder buildingSearchBuilder, StringBuilder sql) {
 		Long staffId = buildingSearchBuilder.getStaffId();
 		if (staffId != null) {
@@ -72,6 +71,7 @@ public class BuildingRepositoryImpl implements BuildingRepository {
 		}
 	}
 
+	// special là cần join và có <= >=
 	public static void querySpecial(BuildingSearchBuilder buildingSearchBuilder, StringBuilder where) {
 		Long staffId = buildingSearchBuilder.getStaffId();
 		if (staffId != null) {
@@ -111,12 +111,7 @@ public class BuildingRepositoryImpl implements BuildingRepository {
 
 	@Override
 	public List<BuildingEntity> findAll(BuildingSearchBuilder buildingSearchBuilder) {
-		// JPQL
-//		String sql = "FROM BuildingEntity";
-//		Query query = entityManager.createQuery(sql, BuildingEntity.class);
-//		return query.getResultList();
-
-		// SQL native
+		// StringBuilder là string có thể thay đổi
 		StringBuilder sql = new StringBuilder(
 				"SELECT b.id, b.name, b.districtid, b.street, b.ward, b.numberofbasement, b.floorarea, b.rentprice, b.managername, b.managerphonenumber, b.servicefee, b.brokeragefee FROM building b ");
 		joinTable(buildingSearchBuilder, sql);
@@ -125,8 +120,33 @@ public class BuildingRepositoryImpl implements BuildingRepository {
 		querySpecial(buildingSearchBuilder, where);
 		where.append(" GROUP BY b.id ");
 		sql.append(where);
-		Query query = entityManager.createNativeQuery(sql.toString(), BuildingEntity.class);
-		return query.getResultList();
+
+		System.out.println(sql);
+		List<BuildingEntity> result = new ArrayList<BuildingEntity>();
+
+		try (Connection conn = ConnectionJDBCUtil.getConnection();
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(sql.toString());) {
+			while (rs.next()) {
+				BuildingEntity buildingEntity = new BuildingEntity();
+				buildingEntity.setId(rs.getLong("b.id"));
+				buildingEntity.setName(rs.getString("b.name"));
+				buildingEntity.setStreet(rs.getString("b.street"));
+				buildingEntity.setWard(rs.getString("b.ward"));
+				buildingEntity.setDistrictid(rs.getLong("b.districtid"));
+				buildingEntity.setFloorArea(rs.getLong("b.floorarea"));
+				buildingEntity.setRentPrice(rs.getLong("b.rentprice"));
+				buildingEntity.setServiceFee(rs.getString("b.servicefee"));
+				buildingEntity.setBrokerageFee(rs.getLong("b.brokeragefee"));
+				buildingEntity.setManagerName(rs.getString("b.managername"));
+				buildingEntity.setManagerPhonenumber(rs.getString("b.managerphonenumber"));
+				result.add(buildingEntity);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return result;
 
 	}
 

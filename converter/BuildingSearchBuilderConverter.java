@@ -24,7 +24,7 @@ public class BuildingSearchBuilderConverter {
 				.setAreaTo(MapUtil.getObject(params, "areaTo", Long.class))
 				.setManagerName(MapUtil.getObject(params, "managerName", String.class))
 				.setManagerPhonenumber(MapUtil.getObject(params, "managerPhoneNumber", String.class))
-				.setStaffId(MapUtil.getObject(params, "staffId", Long.class)).build();
+				.setTypeCode(typeCode).setStaffId(MapUtil.getObject(params, "staffId", Long.class)).build();
 		return buildingSearchBuilder;
 	}
 }
