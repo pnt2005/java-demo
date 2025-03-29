@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -30,9 +31,6 @@ public class BuildingEntity {
 	@Column(name = "street")
 	private String street;
 
-//	@Column(name = "districtid")
-//	private Long districtid;
-
 	@Column(name = "managername")
 	private String managerName;
 
@@ -42,12 +40,29 @@ public class BuildingEntity {
 	@Column(name = "rentprice")
 	private Long rentPrice;
 
+	@Column(name = "floorarea")
+	private Long floorarea;
+
+	@Column(name = "numberofbasement")
+	private Integer numberofbasement;
+
 	@ManyToOne
 	@JoinColumn(name = "districtid")
 	private DistrictEntity district;
 
 	@OneToMany(mappedBy = "building", fetch = FetchType.LAZY)
 	private List<RentAreaEntity> items = new ArrayList<>();
+
+	@ManyToMany(mappedBy = "buildings", fetch = FetchType.LAZY)
+	private List<RentTypeEntity> renttypes = new ArrayList<>();
+
+	public List<RentTypeEntity> getRenttypes() {
+		return renttypes;
+	}
+
+	public void setRenttypes(List<RentTypeEntity> renttypes) {
+		this.renttypes = renttypes;
+	}
 
 	public List<RentAreaEntity> getItems() {
 		return items;
@@ -119,5 +134,21 @@ public class BuildingEntity {
 
 	public void setStreet(String street) {
 		this.street = street;
+	}
+
+	public Integer getNumberofbasement() {
+		return numberofbasement;
+	}
+
+	public void setNumberofbasement(Integer numberofbasement) {
+		this.numberofbasement = numberofbasement;
+	}
+
+	public Long getFloorarea() {
+		return floorarea;
+	}
+
+	public void setFloorarea(Long floorarea) {
+		this.floorarea = floorarea;
 	}
 }

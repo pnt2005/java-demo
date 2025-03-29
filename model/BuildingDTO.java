@@ -11,6 +11,15 @@ public class BuildingDTO {
 	private Long rentPrice;
 	private String serviceFee;
 	private Long brokerageFee;
+	private Integer numberOfBasement;
+
+	public Integer getNumberOfBasement() {
+		return numberOfBasement;
+	}
+
+	public void setNumberOfBasement(Integer numberOfBasement) {
+		this.numberOfBasement = numberOfBasement;
+	}
 
 	public String getName() {
 		return name;
